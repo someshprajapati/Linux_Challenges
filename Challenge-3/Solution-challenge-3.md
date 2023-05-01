@@ -1,3 +1,6 @@
+### Q. Some new developers have joined our team, so we need to create some users/groups and further need to setup some permissions and access rights for them.
+
+
 ### 1. Create a group called "admins"
 > Results:
 ```
