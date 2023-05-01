@@ -11,6 +11,12 @@
 [bob@centos-host ~]$ sudo yum -y install lvm2
 
 [bob@centos-host ~]$ sudo yum makecache --refresh
+```
+
+
+### 2.1. Check the available partition and disk
+> Results:
+```
 [bob@centos-host ~]$ lsblk
 NAME   MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
 vda    253:0    0  11G  0 disk 
@@ -19,12 +25,7 @@ vdb    253:16   0   1G  0 disk
 vdc    253:32   0   1G  0 disk 
 vdd    253:48   0   1G  0 disk 
 vde    253:64   0   1G  0 disk 
-```
 
-
-### 3. Create a Physical Volume for "/dev/vdb"
-> Results:
-```
 [bob@centos-host ~]$ sudo fdisk -l
 Disk /dev/vda: 11 GiB, 11811160064 bytes, 23068672 sectors
 Units: sectors of 1 * 512 = 512 bytes
@@ -55,8 +56,11 @@ Disk /dev/vde: 1 GiB, 1073741824 bytes, 2097152 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+```
 
-
+### 3. Create a Physical Volume for "/dev/vdb"
+> Results:
+```
 [bob@centos-host ~]$ sudo pvcreate /dev/vdb
   Physical volume "/dev/vdb" successfully created.
 ```
@@ -83,8 +87,6 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 ```
 
 ### 7.1. Format the lvm volume "volume_1" as an "XFS" filesystem
-### 7.2. Mount the filesystem at the path "/mnt/dba_storage".
-### 7.3. Make sure that this mount point is persistent across reboots with the correct default options.
 > Results:
 ```
 [bob@centos-host ~]$ sudo mkfs.xfs /dev/dba_storage/volume_1 
@@ -98,10 +100,18 @@ naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
 log      =internal log           bsize=4096   blocks=2560, version=2
          =                       sectsz=512   sunit=0 blks, lazy-count=1
 realtime =none                   extsz=4096   blocks=0, rtextents=0
+```
 
-
+### 7.2. Mount the filesystem at the path "/mnt/dba_storage".
+> Results:
+```
 [bob@centos-host ~]$ sudo mkdir /mnt/dba_storage
 [bob@centos-host ~]$ sudo mount /dev/dba_storage/volume_1 /mnt/dba_storage
+```
+
+### 7.3. Make sure that this mount point is persistent across reboots with the correct default options.
+> Results:
+```
 [bob@centos-host ~]$ sudo vi /etc/fstab 
 [bob@centos-host ~]$ cat /etc/fstab 
 
@@ -124,7 +134,6 @@ UUID=a62c5b49-755e-41b0-9d36-de3d95e17232 /                       xfs     defaul
 ```
 
 ### 8.1. Ensure that the mountpoint "/mnt/dba_storage" has the group ownership set to the "dba_users" group
-### 8.2. Ensure that the mount point "/mnt/dba_storage" has "read/write" and execute permissions for the owner and group and no permissions for anyone else.
 > Results:
 ```
 [bob@centos-host ~]$ ls -l /mnt/
@@ -136,7 +145,11 @@ drwxr-xr-x. 2 root root 6 May  1 06:21 dba_storage
 [bob@centos-host ~]$ ls -l /mnt/
 total 0
 drwxr-xr-x. 2 bob dba_users 6 May  1 06:21 dba_storage
+```
 
+### 8.2. Ensure that the mount point "/mnt/dba_storage" has "read/write" and execute permissions for the owner and group and no permissions for anyone else.
+> Results:
+```
 [bob@centos-host ~]$ sudo chmod 770 /mnt/dba_storage/
 
 [bob@centos-host ~]$ ls -l /mnt/
